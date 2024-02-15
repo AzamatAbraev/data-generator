@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button, Col, InputNumber, Row, Select, Slider, Table, message } from 'antd';
 import type { TableProps } from 'antd';
@@ -43,19 +43,70 @@ const columns: TableProps<DataType>['columns'] = [
 ];
 
 const DataTable = () => {
-  const [data, setData] = useState<DataType[]>([])
+  const [data, setData] = useState<DataType[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [pageNumber, setPageNumber] = useState(1);
   const [region, setRegion] = useState("USA");
   const [sliderValue, setSliderValue] = useState(0);
   const [inputValue, setInputValue] = useState(0);
-  const [seedValue, setSeedValue] = useState(0)
+  const [seedValue, setSeedValue] = useState(0);
+
+  const observer = useRef<IntersectionObserver>();
+  const lastRowRef = useCallback((node: Element | null) => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPageNumber(prevPageNumber => prevPageNumber + 1);
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, [loading, hasMore]);
+
+  useEffect(() => {
+    let isActive = true;
+
+    const fetchData = async () => {
+      if (!isActive) return;
+      setLoading(true);
+      try {
+        const params = { region, errorsPerRecord: sliderValue, seed: seedValue, pageNumber };
+        const response = await request.get("generate", { params });
+        if (isActive) { 
+          const newData = response.data;
+          if (pageNumber === 1) {
+            setData(newData); 
+          } else {
+            setData(prevData => [...prevData, ...newData]);
+          }
+          setHasMore(newData.length > 0);
+        }
+      } catch (error) {
+        if (isActive) message.error("Something went wrong. Please try again later");
+      } finally {
+        if (isActive) setLoading(false);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isActive = false;
+    };
+  }, [region, sliderValue, seedValue, pageNumber]);
+
+
 
   const handleSliderChange = (value: number) => {
     if (isNaN(value)) {
       return;
     }
+    setPageNumber(1);
     setSliderValue(value);
     setInputValue(value);
   };
+
 
   const handleInputChange = (value: number | null) => {
     if (value === null) {
@@ -73,17 +124,25 @@ const DataTable = () => {
       setSeedValue(0);
     } else {
       setSeedValue(value);
+      setPageNumber(1);
     }
   };
 
   const handleRegion = (value: string) => {
-    setRegion(value)
+    setRegion(value);
+    setPageNumber(1);
+    setData([]);
+    setHasMore(true);
   }
 
+
   const generateRandomSeed = () => {
-    const randomSeed = Math.floor(Math.random() * 1000); // Generate a random number between 0 and 1000
+    const randomSeed = Math.floor(Math.random() * 1000);
     setSeedValue(randomSeed);
+    setPageNumber(1);
+    setData([]);
   };
+
 
   useEffect(() => {
     const getData = async () => {
@@ -96,11 +155,9 @@ const DataTable = () => {
 
         }
         const { data } = await request.get("generate", { params });
-
         setData(data)
       } catch (error) {
         message.error("Something went wrong. Please try again later")
-
       }
     }
 
@@ -144,8 +201,14 @@ const DataTable = () => {
         bordered
         size='small'
         pagination={false}
-        dataSource={data.map((person) => ({ ...person, key: person?.id }))}
+        dataSource={data.map((person, index) => ({
+          ...person,
+          key: person?.id || index,
+        }))}
+        rowKey="id"
       />
+      {loading && <div>Loading...</div>}
+      <div ref={hasMore ? lastRowRef : null} style={{ height: 20, background: 'transparent' }} />
     </div>)
 
 };

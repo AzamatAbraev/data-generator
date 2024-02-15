@@ -72,11 +72,11 @@ const DataTable = () => {
       setLoading(true);
       try {
         const params = { region, errorsPerRecord: sliderValue, seed: seedValue, pageNumber };
-        const response = await request.get("generate", { params });
-        if (isActive) { 
+        const response = await request.get("data", { params });
+        if (isActive) {
           const newData = response.data;
           if (pageNumber === 1) {
-            setData(newData); 
+            setData(newData);
           } else {
             setData(prevData => [...prevData, ...newData]);
           }
@@ -154,7 +154,7 @@ const DataTable = () => {
           pageNumber: 1,
 
         }
-        const { data } = await request.get("generate", { params });
+        const { data } = await request.get("data", { params });
         setData(data)
       } catch (error) {
         message.error("Something went wrong. Please try again later")

@@ -1,9 +1,8 @@
 import axios from "axios";
 
 const request = axios.create({
-  baseURL: "http://localhost:3000/",
+  baseURL: "https://random-data-generator.up.railway.app/",
   timeout: 10000,
-  // headers: { "X-Custom-Header": "foobar" },
 });
 
 export default request;

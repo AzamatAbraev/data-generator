@@ -1,0 +1,10 @@
+.controllers__select {
+  padding: 20px 0px;
+}
+.controllers__col {
+  padding: 10px;
+}
+
+.ant-table-thead .ant-table-cell {
+  background-color: rgb(38, 152, 201) !important;
+}

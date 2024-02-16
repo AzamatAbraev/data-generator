@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-import { Button, Col, InputNumber, Row, Select, Slider, Table, message } from 'antd';
+import { Button, Col, InputNumber, Row, Select, Slider, Spin, Table, message } from 'antd';
 import type { TableProps } from 'antd';
+import { RedoOutlined } from '@ant-design/icons';
 
-import request from '../server/request';
 import REGIONS from '../constants';
+import request from '../server/request';
+
+import "./Table.scss"
 
 interface DataType {
   index: string;
@@ -53,6 +55,7 @@ const DataTable = () => {
   const [seedValue, setSeedValue] = useState(0);
 
   const observer = useRef<IntersectionObserver>();
+
   const lastRowRef = useCallback((node: Element | null) => {
     if (loading) return;
     if (observer.current) observer.current.disconnect();
@@ -168,9 +171,11 @@ const DataTable = () => {
     <div>
       <div className="controllers">
         <div className="controllers__select">
-          <Select onSelect={handleRegion} style={{ width: "150px" }} defaultValue="Select region" options={REGIONS} />
-          <Row>
-            <Col span={4}>
+          <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+            <Col className='gutter-row controllers_col' span={6}>
+              <Select onSelect={handleRegion} style={{ width: "150px" }} defaultValue="USA" options={REGIONS} />
+            </Col>
+            <Col className='gutter-row controllers_col' span={6}>
               <Slider
                 min={0}
                 max={10}
@@ -179,7 +184,7 @@ const DataTable = () => {
                 step={0.1}
               />
             </Col>
-            <Col span={4}>
+            <Col className='gutter-row controllers_col' span={6}>
               <InputNumber
                 min={0}
                 max={1000}
@@ -189,14 +194,16 @@ const DataTable = () => {
                 onChange={handleInputChange}
               />
             </Col>
-          </Row>
-          <Row>
-            <InputNumber min={1} value={seedValue} defaultValue={0} onChange={handleSeedChange} />
-            <Button onClick={generateRandomSeed} style={{ marginLeft: '10px' }}>Generate Random Seed</Button>
+            <Col className='gutter-row controllers_col' span={6}>
+              <InputNumber min={1} value={seedValue} defaultValue={0} onChange={handleSeedChange} />
+              <Button onClick={generateRandomSeed} style={{ marginLeft: '10px' }}><RedoOutlined type='outlined' style={{ fontSize: '20px', color: 'black' }} /></Button>
+            </Col>
+
           </Row>
         </div>
       </div>
       <Table
+        className='data__table'
         columns={columns}
         bordered
         size='small'
@@ -206,6 +213,7 @@ const DataTable = () => {
           key: person?.id || index,
         }))}
         rowKey="id"
+        loading={{ indicator: <Spin />, spinning: loading }}
       />
       {loading && <div>Loading...</div>}
       <div ref={hasMore ? lastRowRef : null} style={{ height: 20, background: 'transparent' }} />

@@ -1,30 +1,17 @@
-# React + TypeScript + Vite
+# Data Generator Web Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a web application for generating based on different regions. It allows users to specify the region, number of errors per record, seed value, and pagination parameters to generate custom datasets. The generated data can be viewed in a table format on the frontend and exported to a CSV file.
 
-Currently, two official plugins are available:
+## Tech-stack
+- React.js
+- Node.js
+- Other packages and libraries
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- Generate synthetic data based on selected regions.
+- Adjust the number of errors per record to simulate data quality issues.
+- Set a seed value for reproducible data generation.
+- Paginate through the generated data.
+- View the generated data in a table format.
+- Export the generated data to a CSV file.

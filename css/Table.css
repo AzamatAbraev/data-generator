@@ -1,10 +1,35 @@
-.controllers__select {
-  padding: 20px 0px;
+.controllers {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 0px;
 }
 .controllers__col {
-  padding: 10px;
+  padding: 10px !important;
+}
+.controllers div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ant-table-cell {
+  font-family: "Roboto", sans-serif !important;
 }
 
 .ant-table-thead .ant-table-cell {
   background-color: rgb(38, 152, 201) !important;
+}
+
+@media (max-width: 1100px) {
+  .controllers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+}
+@media (max-width: 750px) {
+  .controllers {
+    grid-template-columns: 1fr;
+  }
 }

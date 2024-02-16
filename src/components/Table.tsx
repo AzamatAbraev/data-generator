@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Row, Select, Slider, Spin, Table, message } from 'antd';
+import { Button, InputNumber, Select, Slider, Spin, Table, message } from 'antd';
 import type { TableProps } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 
@@ -146,6 +146,33 @@ const DataTable = () => {
     setData([]);
   };
 
+  const exportToCSV = async () => {
+    const queryString = `?region=${region}&errorsPerRecord=${sliderValue}&seed=${seedValue}&pageNumber=${pageNumber}`;
+
+    try {
+      const response = await fetch(`${"https://random-data-generator.up.railway.app"}/export${queryString}`);
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = "data.csv";
+        document.body.appendChild(link);
+        link.click();
+
+        window.URL.revokeObjectURL(downloadUrl);
+        link.remove();
+      } else {
+        message.error("Failed to export CSV");
+      }
+    } catch (error) {
+      message.error("Error: CSV export failed");
+    }
+  };
+
+
 
   useEffect(() => {
     const getData = async () => {
@@ -170,36 +197,38 @@ const DataTable = () => {
   return (
     <div>
       <div className="controllers">
-        <div className="controllers__select">
-          <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-            <Col className='gutter-row controllers_col' span={6}>
-              <Select onSelect={handleRegion} style={{ width: "150px" }} defaultValue="USA" options={REGIONS} />
-            </Col>
-            <Col className='gutter-row controllers_col' span={6}>
-              <Slider
-                min={0}
-                max={10}
-                onChange={handleSliderChange}
-                value={sliderValue}
-                step={0.1}
-              />
-            </Col>
-            <Col className='gutter-row controllers_col' span={6}>
-              <InputNumber
-                min={0}
-                max={1000}
-                style={{ margin: '0 16px' }}
-                step={0.1}
-                value={inputValue}
-                onChange={handleInputChange}
-              />
-            </Col>
-            <Col className='gutter-row controllers_col' span={6}>
-              <InputNumber min={1} value={seedValue} defaultValue={0} onChange={handleSeedChange} />
-              <Button onClick={generateRandomSeed} style={{ marginLeft: '10px' }}><RedoOutlined type='outlined' style={{ fontSize: '20px', color: 'black' }} /></Button>
-            </Col>
-
-          </Row>
+        <div className='controllers__region'>
+          <h3>Region: </h3>
+          <Select onSelect={handleRegion} style={{ width: "150px" }} defaultValue="USA" options={REGIONS} />
+        </div>
+        <div className='controllers__error'>
+          <h3>Errors: </h3>
+          <Slider
+            min={0}
+            max={10}
+            onChange={handleSliderChange}
+            value={sliderValue}
+            step={0.1}
+            style={{ width: "150px" }}
+          />
+          <InputNumber
+            min={0}
+            max={1000}
+            style={{ margin: '0 16px' }}
+            step={0.1}
+            value={inputValue}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className='controllers__seed'>
+          <h3>Seed: </h3>
+          <InputNumber min={1} value={seedValue} defaultValue={0} onChange={handleSeedChange} />
+          <Button onClick={generateRandomSeed} style={{ marginLeft: '10px' }}><RedoOutlined type='outlined' style={{ fontSize: '20px', color: 'black' }} /></Button>
+        </div>
+        <div>
+          <Button type="primary" onClick={exportToCSV}>
+            Export
+          </Button>
         </div>
       </div>
       <Table
@@ -214,6 +243,7 @@ const DataTable = () => {
         }))}
         rowKey="id"
         loading={{ indicator: <Spin />, spinning: loading }}
+        scroll={{ x: "750px" }}
       />
       {loading && <div>Loading...</div>}
       <div ref={hasMore ? lastRowRef : null} style={{ height: 20, background: 'transparent' }} />

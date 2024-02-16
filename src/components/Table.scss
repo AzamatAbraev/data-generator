@@ -1,13 +1,55 @@
 .controllers {
-  &__select {
-    padding: 20px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 0px;
+  &__col {
+    padding: 10px !important;
   }
 
-  &__col {
-    padding: 10px;
+  div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
+
+  // &__error {
+  //   display: flex;
+  //   align-items: center;
+  //   gap: 10px;
+  // }
+
+  // &__region {
+  //   display: flex;
+  //   align-items: center;
+  //   gap: 10px;
+  // }
+
+  // &__seed {
+  //   display: flex;
+  //   align-items: center;
+  //   gap: 10px;
+  // }
+}
+
+.ant-table-cell {
+  font-family: "Roboto", sans-serif !important;
 }
 
 .ant-table-thead .ant-table-cell {
   background-color: rgb(38, 152, 201) !important;
+}
+
+@media (max-width: 1100px) {
+  .controllers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 750px) {
+  .controllers {
+    grid-template-columns: 1fr;
+  }
 }

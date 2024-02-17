@@ -74,7 +74,7 @@ const DataTable = () => {
       if (!isActive) return;
       setLoading(true);
       try {
-        const params = { region, errorsPerRecord: sliderValue, seed: seedValue, pageNumber };
+        const params = { region, errorsPerRecord: inputValue, seed: seedValue, pageNumber };
         const response = await request.get("data", { params });
         if (isActive) {
           const newData = response.data;
@@ -97,7 +97,7 @@ const DataTable = () => {
     return () => {
       isActive = false;
     };
-  }, [region, sliderValue, seedValue, pageNumber]);
+  }, [region, inputValue, seedValue, pageNumber]);
 
 
 
@@ -147,7 +147,7 @@ const DataTable = () => {
   };
 
   const exportToCSV = async () => {
-    const queryString = `?region=${region}&errorsPerRecord=${sliderValue}&seed=${seedValue}&pageNumber=${pageNumber}`;
+    const queryString = `?region=${region}&errorsPerRecord=${inputValue}&seed=${seedValue}&pageNumber=${pageNumber}`;
 
     try {
       const response = await fetch(`${"https://random-data-generator.up.railway.app"}/export${queryString}`);
@@ -179,7 +179,7 @@ const DataTable = () => {
       try {
         const params = {
           region: region,
-          errorsPerRecord: sliderValue,
+          errorsPerRecord: inputValue,
           seed: seedValue,
           pageNumber: 1,
 
@@ -192,7 +192,7 @@ const DataTable = () => {
     }
 
     getData()
-  }, [seedValue, sliderValue, region])
+  }, [seedValue, inputValue, region])
 
   return (
     <div>
